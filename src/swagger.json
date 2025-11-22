@@ -1,0 +1,425 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "MrNewton Activity Provider API",
+    "version": "1.0.0",
+    "description": "Backend skeleton for MrNewton Activity Provider in Inven!RA architecture. Provides static JSON responses for activity configuration and deployment endpoints.",
+    "contact": {
+      "name": "MrNewton Team"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/api/v1/config/params": {
+      "get": {
+        "summary": "Get configuration parameters schema",
+        "description": "Returns the schema of all available configuration parameters for MrNewton activities",
+        "tags": ["Configuration"],
+        "responses": {
+          "200": {
+            "description": "Configuration parameters schema",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "params": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "params": [
+                    {
+                      "name": "title",
+                      "type": "string",
+                      "description": "Título da atividade"
+                    },
+                    {
+                      "name": "grade",
+                      "type": "integer",
+                      "description": "Ano (10,11,12)"
+                    },
+                    {
+                      "name": "modules",
+                      "type": "array",
+                      "items": "string",
+                      "description": "Módulos temáticos"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/config": {
+      "post": {
+        "summary": "Create and validate activity configuration",
+        "description": "Receives and validates an activity configuration. Returns the configuration with a generated activity_id if validation passes.",
+        "tags": ["Configuration"],
+        "requestBody": {
+          "description": "Activity configuration to validate and create",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title", "grade", "modules", "number_of_exercises", "total_time_minutes", "exercises"],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "Título da atividade"
+                  },
+                  "grade": {
+                    "type": "integer",
+                    "enum": [10, 11, 12],
+                    "description": "Ano escolar (10, 11 ou 12)"
+                  },
+                  "modules": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "description": "Módulos temáticos"
+                  },
+                  "number_of_exercises": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Número de exercícios"
+                  },
+                  "total_time_minutes": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Tempo total em minutos"
+                  },
+                  "number_of_retries": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Número de tentativas permitidas"
+                  },
+                  "relative_tolerance_pct": {
+                    "type": "number",
+                    "description": "Tolerância relativa em percentagem"
+                  },
+                  "absolute_tolerance": {
+                    "type": "number",
+                    "description": "Tolerância absoluta"
+                  },
+                  "show_answers_after_submission": {
+                    "type": "boolean",
+                    "description": "Mostrar respostas após submissão"
+                  },
+                  "scoring_policy": {
+                    "type": "string",
+                    "enum": ["linear", "non-linear"],
+                    "description": "Política de pontuação"
+                  },
+                  "approval_threshold": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Limiar de aprovação (0-1)"
+                  },
+                  "exercises": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "object",
+                      "required": ["question", "options"],
+                      "properties": {
+                        "question": {
+                          "type": "string"
+                        },
+                        "options": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "correct_options": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "correct_answer": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "description": "Lista de exercícios"
+                  }
+                }
+              },
+              "example": {
+                "title": "Exame de Física - Treino",
+                "grade": 12,
+                "modules": ["Forças", "Ondas"],
+                "number_of_exercises": 3,
+                "total_time_minutes": 90,
+                "number_of_retries": 2,
+                "show_answers_after_submission": true,
+                "scoring_policy": "linear",
+                "approval_threshold": 0.6,
+                "exercises": [
+                  {
+                    "question": "Um bloco de massa 2,5 kg é acelerado a 5 m/s². Qual é a força resultante que atua sobre o bloco?",
+                    "options": ["F = ma", "E = 1/2 m v^2", "p = mv", "W = Fd"],
+                    "correct_options": ["F = ma"],
+                    "correct_answer": "12.5 N"
+                  },
+                  {
+                    "question": "Uma bola de massa 0,5 kg move-se a 10 m/s. Qual a sua energia cinética?",
+                    "options": ["Expressão da energia cinética", "2.ª lei de Newton", "Equação do movimento uniformemente acelerado", "Princípio da conservação da quantidade de movimento"],
+                    "correct_options": ["Expressão da energia cinética"],
+                    "correct_answer": "25 J"
+                  },
+                  {
+                    "question": "Um automóvel parte do repouso e acelera uniformemente a 2 m/s² durante 8 s. Qual a distância percorrida neste intervalo?",
+                    "options": ["Equação horária do movimento uniformemente acelerado", "Lei de Hooke", "Equação da energia potencial gravitacional", "F = m*a"],
+                    "correct_options": ["Equação horária do movimento uniformemente acelerado"],
+                    "correct_answer": "64 m"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Configuration created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "activity_id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "grade": {
+                      "type": "integer"
+                    },
+                    "modules": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "number_of_exercises": {
+                      "type": "integer"
+                    },
+                    "total_time_minutes": {
+                      "type": "integer"
+                    },
+                    "number_of_retries": {
+                      "type": "integer"
+                    },
+                    "show_answers_after_submission": {
+                      "type": "boolean"
+                    },
+                    "scoring_policy": {
+                      "type": "string",
+                      "enum": ["linear", "non-linear"]
+                    },
+                    "approval_threshold": {
+                      "type": "number"
+                    },
+                    "exercises": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                },
+                "example": {
+                  "activity_id": "activity_abc123xyz",
+                  "title": "Exame de Física - Treino",
+                  "grade": 12,
+                  "modules": ["Forças", "Ondas"],
+                  "number_of_exercises": 3,
+                  "total_time_minutes": 90,
+                  "number_of_retries": 2,
+                  "show_answers_after_submission": true,
+                  "scoring_policy": "linear",
+                  "approval_threshold": 0.6,
+                  "exercises": [
+                    {
+                      "question": "Um bloco de massa 2,5 kg é acelerado a 5 m/s². Qual é a força resultante que atua sobre o bloco?",
+                      "options": ["F = ma", "E = 1/2 m v^2", "p = mv", "W = Fd"],
+                      "correct_options": ["F = ma"],
+                      "correct_answer": "12.5"
+                    },
+                    {
+                      "question": "Uma bola de massa 0,5 kg move-se a 10 m/s. Qual a sua energia cinética?",
+                      "options": ["Expressão da energia cinética", "2.ª lei de Newton", "Equação do movimento uniformemente acelerado", "Princípio da conservação da quantidade de movimento"],
+                      "correct_options": ["Expressão da energia cinética"],
+                      "correct_answer": "25"
+                    },
+                    {
+                      "question": "Um automóvel parte do repouso e acelera uniformemente a 2 m/s² durante 8 s. Qual a distância percorrida neste intervalo?",
+                      "options": ["Equação horária do movimento uniformemente acelerado", "Lei de Hooke", "Equação da energia potencial gravitacional", "F = m*a"],
+                      "correct_options": ["Equação horária do movimento uniformemente acelerado"],
+                      "correct_answer": "64"
+                    }
+                  ],
+                  "created_at": "2025-11-22T10:30:00.000Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "details": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "error": "Erro na validação dos dados",
+                  "details": [
+                    "O título da atividade é obrigatório",
+                    "O ano escolar deve ser 10, 11 ou 12"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/deploy": {
+      "post": {
+        "summary": "Deploy activity instance",
+        "description": "Creates a new instance of the activity (simulation - returns static response)",
+        "tags": ["Deployment"],
+        "requestBody": {
+          "description": "Activity configuration to deploy",
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "activity_template_id": "template-mrnewton-v1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Activity instance created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "instance_id": {
+                      "type": "string"
+                    },
+                    "deploy_url": {
+                      "type": "string"
+                    },
+                    "expires_in_seconds": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "example": {
+                  "instance_id": "inst_abc123",
+                  "deploy_url": "https://mrnewton.example.com/instances/inst_abc123",
+                  "expires_in_seconds": 2592000
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "description": "Check if the service is running",
+        "tags": ["Health"],
+        "responses": {
+          "200": {
+            "description": "Service is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "service": {
+                      "type": "string"
+                    },
+                    "timestamp": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Configuration",
+      "description": "Activity configuration endpoints"
+    },
+    {
+      "name": "Deployment",
+      "description": "Activity deployment endpoints"
+    },
+    {
+      "name": "Health",
+      "description": "Health check endpoints"
+    }
+  ]
+}
