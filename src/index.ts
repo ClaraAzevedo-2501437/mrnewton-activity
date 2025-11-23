@@ -26,6 +26,11 @@ app.use('/api/v1/deploy', deployRoutes);
 // Swagger documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+// Redirect root to API documentation
+app.get('/', (req: Request, res: Response) => {
+  res.redirect('/api-docs');
+});
+
 // Health check
 app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', service: 'mrnewton-activity', timestamp: new Date().toISOString() });
