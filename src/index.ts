@@ -1,55 +1,132 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
-import configRoutes from './routes/config';
-import deployRoutes from './routes/deploy';
 import swaggerDocument from './swagger.json';
 
-const app = express();
-const PORT = process.env.PORT || 5000;
+// Infrastructure
+import { logger, LogLevel } from './infra/logger';
+import { mongoConnection } from './infra/db/mongodb';
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// Repositories
+import { ActivityRepositoryMongo } from './repositories/impl/activityRepositoryMongo';
+import { InstanceRepositoryMongo } from './repositories/impl/instanceRepositoryMongo';
+import { SubmissionRepositoryMongo } from './repositories/impl/submissionRepositoryMongo';
+import { ConfigParamsSchemaRepositoryMongo } from './repositories/impl/paramSchemaRepositoryMongo';
 
-// Request logger
-app.use((req: Request, res: Response, next) => {
-  const timestamp = new Date().toISOString();
-  console.log(`[${timestamp}] ${req.method} ${req.path}`);
-  next();
+// Services
+import { ActivityService } from './services/activityService';
+
+// API
+import { configureRoutes } from './api/routes';
+import { errorHandler, notFoundHandler, requestLogger } from './api/middleware/errorHandler';
+
+// Configure logger
+logger.setLevel(process.env.LOG_LEVEL === 'DEBUG' ? LogLevel.DEBUG : LogLevel.INFO);
+
+/**
+ * Initialize application dependencies
+ */
+function initializeDependencies() {
+  // Use MongoDB repositories by default
+  const activityRepository = new ActivityRepositoryMongo();
+  const instanceRepository = new InstanceRepositoryMongo();
+  const submissionRepository = new SubmissionRepositoryMongo();
+  const configParamsSchemaRepository = new ConfigParamsSchemaRepositoryMongo();
+
+  // Initialize services
+  const activityService = new ActivityService(
+    activityRepository,
+    instanceRepository,
+    submissionRepository,
+    configParamsSchemaRepository
+  );
+
+  return { activityService };
+}
+
+/**
+ * Create and configure Express app
+ */
+function createApp() {
+  const app = express();
+  
+  // Middleware
+  app.use(cors());
+  app.use(express.json());
+  app.use(requestLogger);
+
+  // Initialize dependencies
+  const { activityService } = initializeDependencies();
+
+  // API Routes
+  const apiRouter = configureRoutes(activityService);
+  app.use('/api/v1', apiRouter);
+
+  // Swagger documentation
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+  // Redirect root to API documentation
+  app.get('/', (req: Request, res: Response) => {
+    res.redirect('/api-docs');
+  });
+
+  // Health check
+  app.get('/health', (req: Request, res: Response) => {
+    res.json({ 
+      status: 'ok', 
+      service: 'mrnewton-activity', 
+      timestamp: new Date().toISOString(),
+      mongodb: mongoConnection.isConnected() ? 'connected' : 'disconnected'
+    });
+  });
+
+  // 404 handler
+  app.use(notFoundHandler);
+
+  // Centralized error handler
+  app.use(errorHandler);
+
+  return app;
+}
+
+/**
+ * Start the server
+ */
+async function startServer() {
+  const PORT = process.env.PORT || 5000;
+  
+  try {
+    // Connect to MongoDB with mrnewton-activity database
+    await mongoConnection.connect({ dbName: 'mrnewton-activity' });
+    logger.info('MongoDB connected successfully');
+
+    // Create and start Express app
+    const app = createApp();
+    
+    app.listen(PORT, () => {
+      logger.info(`MrNewton Activity Provider running on http://localhost:${PORT}`);
+      logger.info(`API Documentation available at http://localhost:${PORT}/api-docs`);
+    });
+  } catch (error) {
+    logger.error('Failed to start server', error);
+    process.exit(1);
+  }
+}
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  logger.info('Shutting down gracefully...');
+  await mongoConnection.disconnect();
+  process.exit(0);
 });
 
-// API Routes
-app.use('/api/v1/config', configRoutes);
-app.use('/api/v1/deploy', deployRoutes);
-
-// Swagger documentation
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-// Redirect root to API documentation
-app.get('/', (req: Request, res: Response) => {
-  res.redirect('/api-docs');
+process.on('SIGTERM', async () => {
+  logger.info('Shutting down gracefully...');
+  await mongoConnection.disconnect();
+  process.exit(0);
 });
 
-// Health check
-app.get('/health', (req: Request, res: Response) => {
-  res.json({ status: 'ok', service: 'mrnewton-activity', timestamp: new Date().toISOString() });
-});
+// Start the server
+startServer();
 
-// 404 handler
-app.use((req: Request, res: Response) => {
-  res.status(404).json({ error: 'Not Found', path: req.path });
-});
-
-// Error handler
-app.use((err: Error, req: Request, res: Response) => {
-  console.error('Error:', err);
-  res.status(500).json({ error: 'Internal Server Error' });
-});
-
-app.listen(PORT, () => {
-  console.log(`MrNewton Activity Provider running on http://localhost:${PORT}`);
-  console.log(`API Documentation available at http://localhost:${PORT}/api-docs`);
-});
-
-export default app;
+export default createApp();

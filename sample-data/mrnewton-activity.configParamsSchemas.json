@@ -1,0 +1,66 @@
+[{
+  "_id": "3a83699b-b13b-4588-be64-b7599e5df898",
+  "createdAt": "2025-12-04T19:01:29.498Z",
+  "isCurrent": true,
+  "params": [
+    {
+      "name": "title",
+      "type": "string",
+      "description": "Título da atividade"
+    },
+    {
+      "name": "grade",
+      "type": "integer",
+      "description": "Ano (10,11,12)"
+    },
+    {
+      "name": "modules",
+      "type": "array",
+      "items": "string",
+      "description": "Módulos temáticos"
+    },
+    {
+      "name": "number_of_exercises",
+      "type": "integer"
+    },
+    {
+      "name": "total_time_minutes",
+      "type": "integer"
+    },
+    {
+      "name": "number_of_retries",
+      "type": "integer"
+    },
+    {
+      "name": "relative_tolerance_pct",
+      "type": "number"
+    },
+    {
+      "name": "absolute_tolerance",
+      "type": "number"
+    },
+    {
+      "name": "show_answers_after_submission",
+      "type": "boolean"
+    },
+    {
+      "name": "scoring_policy",
+      "type": "string",
+      "enum": [
+        "linear",
+        "non-linear"
+      ]
+    },
+    {
+      "name": "approval_threshold",
+      "type": "number"
+    },
+    {
+      "name": "exercises",
+      "type": "array",
+      "items": "object",
+      "description": "Lista de exercícios (question, options, correct_options, correct_answer)"
+    }
+  ],
+  "updatedAt": "2025-12-04T19:01:29.498Z"
+}]

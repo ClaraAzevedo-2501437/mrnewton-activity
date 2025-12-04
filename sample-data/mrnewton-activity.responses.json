@@ -1,0 +1,56 @@
+[{
+  "_id": "6cc84d82-493f-4a41-90c0-45938dcb7db2",
+  "attempts": [
+    {
+      "attemptIndex": 1,
+      "answers": {
+        "exercise_1": {
+          "selectedOption": "Equação da aceleração",
+          "rationale": "Usei a equação da aceleração porque o problema menciona velocidade e movimento, e a aceleração relaciona a variação de velocidade com o tempo."
+        },
+        "exercise_2": {
+          "selectedOption": "2.ª Lei de Newton (Lei Fundamental da Dinâmica)",
+          "rationale": "De acordo com as leis de Newton que estudei, a segunda lei explica o comportamento de corpos sujeitos a forças, que é o caso descrito no enunciado."
+        },
+        "exercise_3": {
+          "selectedOption": "F = ma",
+          "rationale": "Usei a fórmula F = ma porque o enunciado fornece massa e força, então aplicando F = ma, tenho 20 = 4 × a, logo a = 5 m/s²."
+        },
+        "exercise_4": {
+          "selectedOption": "Soma vetorial simples",
+          "rationale": "Como são duas forças atuando no mesmo objeto, pensei que a resultante seria a soma direta das duas forças: 3 N + 4 N = 7 N."
+        }
+      },
+      "result": 25,
+      "submittedAt": "2025-12-04T16:10:00.000Z"
+    },
+    {
+      "attemptIndex": 2,
+      "answers": {
+        "exercise_1": {
+          "selectedOption": "Conversão de unidades",
+          "rationale": "Agora percebi que se trata de uma conversão de unidades. Para passar de km/h para m/s, uso o fator de conversão dividindo por 3,6."
+        },
+        "exercise_2": {
+          "selectedOption": "1.ª Lei de Newton (Lei da Inércia)",
+          "rationale": "De acordo com a Lei da Inércia, um corpo mantém o seu estado de movimento ou repouso até que uma força externa atue sobre ele, que é exatamente o que o enunciado descreve."
+        },
+        "exercise_3": {
+          "selectedOption": "F = ma",
+          "rationale": "Continuo a usar a fórmula F = ma porque é a relação correta entre força, massa e aceleração. Dividindo 20 N por 4 kg obtenho 5 m/s²."
+        },
+        "exercise_4": {
+          "selectedOption": "Teorema de Pitágoras",
+          "rationale": "Como as forças são perpendiculares entre si, aplico o Teorema de Pitágoras para calcular a resultante: √(3² + 4²) = √(9 + 16) = √25 = 5 N."
+        }
+      },
+      "result": 100,
+      "submittedAt": "2025-12-04T16:20:00.000Z"
+    }
+  ],
+  "createdAt": "2025-12-04T19:04:27.314Z",
+  "instanceId": "inst_7bja3ssea",
+  "numberOfAttempts": 2,
+  "studentId": "student-001",
+  "submissionId": "6cc84d82-493f-4a41-90c0-45938dcb7db2"
+}]
