@@ -35,7 +35,16 @@ class MongoConnection {
       // Redact password from URL for logging
       const urlForLogging = this.config.url.replace(/\/\/([^:]+):([^@]+)@/, '//$1:****@');
       logger.info(`Connecting to MongoDB at ${urlForLogging}...`);
-      this.client = new MongoClient(this.config.url);
+      
+      // Add TLS options to handle SSL issues on Render
+      this.client = new MongoClient(this.config.url, {
+        tls: true,
+        tlsAllowInvalidCertificates: false,
+        tlsAllowInvalidHostnames: false,
+        serverSelectionTimeoutMS: 10000,
+        socketTimeoutMS: 45000,
+      });
+      
       await this.client.connect();
       this.db = this.client.db(this.config.dbName);
       logger.info(`Connected to MongoDB database: ${this.config.dbName}`);
