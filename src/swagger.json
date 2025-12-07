@@ -377,6 +377,84 @@
         }
       }
     },
+    "/api/v1/submissions/instance/{instanceId}": {
+      "get": {
+        "summary": "Get all submissions for an instance",
+        "description": "Returns all student submissions for a specific deployment instance",
+        "tags": ["Submissions"],
+        "parameters": [
+          {
+            "name": "instanceId",
+            "in": "path",
+            "required": true,
+            "description": "The deployment instance ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of submissions for the instance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Submission"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Instance not found"
+          }
+        }
+      }
+    },
+    "/api/v1/submissions/instance/{instanceId}/student/{studentId}": {
+      "get": {
+        "summary": "Get student submission for an instance",
+        "description": "Returns a specific student's submission for a deployment instance",
+        "tags": ["Submissions"],
+        "parameters": [
+          {
+            "name": "instanceId",
+            "in": "path",
+            "required": true,
+            "description": "The deployment instance ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "studentId",
+            "in": "path",
+            "required": true,
+            "description": "The student ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Student submission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Submission"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Submission not found"
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "summary": "Health check",
@@ -418,8 +496,138 @@
       "description": "Activity deployment endpoints"
     },
     {
+      "name": "Submissions",
+      "description": "Student submission endpoints"
+    },
+    {
       "name": "Health",
       "description": "Health check endpoints"
     }
-  ]
+  ],
+  "components": {
+    "schemas": {
+      "Submission": {
+        "type": "object",
+        "properties": {
+          "submissionId": {
+            "type": "string",
+            "description": "Unique submission identifier"
+          },
+          "instanceId": {
+            "type": "string",
+            "description": "Deployment instance identifier"
+          },
+          "studentId": {
+            "type": "string",
+            "description": "Student identifier"
+          },
+          "activityId": {
+            "type": "string",
+            "description": "Activity identifier"
+          },
+          "title": {
+            "type": "string",
+            "description": "Activity title"
+          },
+          "grade": {
+            "type": "integer",
+            "description": "Grade level"
+          },
+          "modules": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Module names"
+          },
+          "number_of_exercises": {
+            "type": "integer",
+            "description": "Total number of exercises"
+          },
+          "total_time_minutes": {
+            "type": "integer",
+            "description": "Total time allocated in minutes"
+          },
+          "number_of_retries": {
+            "type": "integer",
+            "description": "Number of retries allowed"
+          },
+          "show_answers_after_submission": {
+            "type": "boolean",
+            "description": "Whether to show answers after submission"
+          },
+          "scoring_policy": {
+            "type": "string",
+            "enum": ["linear", "non-linear"],
+            "description": "Scoring policy"
+          },
+          "approval_threshold": {
+            "type": "number",
+            "description": "Approval threshold (0-1)"
+          },
+          "attempts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AttemptResult"
+            },
+            "description": "List of attempt results"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Submission creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
+          }
+        }
+      },
+      "AttemptResult": {
+        "type": "object",
+        "properties": {
+          "attemptNumber": {
+            "type": "integer",
+            "description": "Attempt number"
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "question": {
+                  "type": "string"
+                },
+                "studentAnswer": {
+                  "type": "string"
+                },
+                "isCorrect": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "description": "Student answers for this attempt"
+          },
+          "score": {
+            "type": "number",
+            "description": "Score achieved (0-1)"
+          },
+          "passed": {
+            "type": "boolean",
+            "description": "Whether the attempt passed"
+          },
+          "timeSpentSeconds": {
+            "type": "integer",
+            "description": "Time spent in seconds (optional)"
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Submission timestamp"
+          }
+        }
+      }
+    }
+  }
 }
