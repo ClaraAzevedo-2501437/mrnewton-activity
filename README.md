@@ -1,88 +1,91 @@
 # MrNewton Activity Provider
 
-## Descrição
+Backend service for MrNewton Activity Provider in the Inven!RA architecture. Provides REST API endpoints for activity configuration, deployment, and student submissions.
 
-Protótipo do backend do **MrNewton Activity Provider**. Este serviço fornece endpoints REST para configuração e deployment de atividades de Física, retornando respostas JSON estáticas para fins de teste e desenvolvimento inicial.
+## Tech Stack
 
-## Tecnologias Utilizadas
+- **Node.js** with **TypeScript**
+- **Express** - REST API framework
+- **MongoDB Atlas** - Cloud database
+- **Swagger UI** - API documentation
 
-- **Node.js** (v20.x) com **TypeScript**
-- **Express** - Framework web para criação de APIs REST
-- **Swagger UI Express** - Documentação OpenAPI automática e interativa
-- **Jest** + **Supertest** - Framework de testes unitários e de integração
-- **CORS** - Middleware para controlo de acesso entre origens
+## Setup
 
-## Como Executar o Projeto (Windows/CMD)
+### Prerequisites
+- Node.js 20.x+
+- npm 10.x+
 
-### Pré-requisitos
-- Node.js 20.x ou superior
-- npm 10.x ou superior
+### Installation
 
-### Instalação
-```cmd
-:: Instalar dependências
+```bash
 npm install
 ```
 
-### Executar em Modo Desenvolvimento
-```cmd
-:: Com hot-reload automático
+### Configuration
+
+The application connects to MongoDB Atlas. Set environment variables if using a different cluster:
+```bash
+MONGODB_URL=mongodb+srv://user:password@cluster.mongodb.net/
+MONGODB_DB_NAME=mrnewton-activity
+PORT=5000
+```
+
+Default connection uses the pre-configured MongoDB Atlas cluster.
+
+### Run
+
+**Development mode (with hot-reload):**
+```bash
 npm run dev
 ```
 
-### Executar em Modo Produção
-```cmd
-:: Compilar TypeScript para JavaScript
+**Production mode:**
+```bash
 npm run build
-
-:: Executar a aplicação compilada
 npm start
 ```
 
-O servidor estará disponível em: **http://localhost:5000**
+Server runs on: **http://localhost:5000**
 
-## Documentação
+## API Documentation
 
-A documentação completa da API está disponível através do Swagger UI:
+Interactive API docs: **http://localhost:5000/api-docs**
 
-**URL:** http://localhost:5000/api-docs
+## Main Endpoints
 
-A documentação é gerada automaticamente a partir do ficheiro `src/swagger.json` e fornece uma interface interativa para testar todos os endpoints disponíveis.
+### Configuration
+- `GET /api/v1/config/params` - Get configuration parameter schema
+- `POST /api/v1/config` - Create and validate activity configuration
 
-## Endpoints Disponíveis
+### Deployment
+- `POST /api/v1/deploy` - Deploy activity instance
 
-### 1. **GET /api-docs**
-Documentação interativa da API (Swagger UI).
+### Submissions
+- `GET /api/v1/submissions/instance/{instanceId}` - Get all submissions for an instance
+- `GET /api/v1/submissions/instance/{instanceId}/student/{studentId}` - Get student submission
 
-Aceda a http://localhost:5000/api-docs para visualizar e testar todos os endpoints de forma interativa.
+### Health
+- `GET /health` - Service health check
 
----
+## Database Structure
 
-### 2. **GET /api/v1/config/params**
-Retorna o schema de parâmetros de configuração disponíveis para atividades MrNewton.
+**Database:** `mrnewton-activity` (MongoDB Atlas)
 
-**Descrição:** Obtém a lista completa de parâmetros que podem ser utilizados ao configurar uma atividade, incluindo o nome, tipo e descrição de cada parâmetro.
+**Collections:**
+1. **`configParamsSchemas`** - Activity parameter definitions
+2. **`activities`** - Activity configurations (quizzes)
+3. **`instances`** - Deployed activity instances
+4. **`submissions`** - Student submissions with attempts
 
-**Resposta:** 200 OK com schema JSON dos parâmetros
+## Architecture
 
----
+- **Domain Layer:** Models, validators, builders
+- **Repository Layer:** Data access (MongoDB)
+- **Service Layer:** Business logic
+- **API Layer:** REST controllers and routes
+- **Infrastructure:** Database, logging
 
-### 3. **POST /api/v1/config**
-Cria e valida uma configuração de atividade.
+## Sample Data
 
-**Descrição:** Recebe uma configuração de atividade, valida todos os parâmetros obrigatórios e opcionais, e retorna a configuração com um `activity_id` gerado se a validação for bem-sucedida. Caso contrário, retorna os erros de validação encontrados.
+Sample data is available in the `sample-data/` directory. The database on MongoDB Atlas is pre-populated with test data including activities, instances, and submissions.
 
-**Resposta:** 
-- 201 Created (configuração válida)
-- 400 Bad Request (erros de validação)
-
----
-
-### 4. **POST /api/v1/deploy**
-Cria uma instância de atividade (deployment).
-
-**Descrição:** Simula a criação de uma instância de atividade pronta para ser utilizada por estudantes. Retorna um ID da instância, URL de acesso e tempo de expiração.
-
-**Resposta:** 201 Created com detalhes da instância criada
-
----
