@@ -147,4 +147,34 @@ export class InstanceController {
       next(error);
     }
   };
+
+  /**
+   * GET /api/v1/submissions/instance/:instanceId/student/:studentId
+   * Get submission for a specific student in an instance
+   */
+  public getSubmissionByInstanceAndStudent = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { instanceId, studentId } = req.params;
+      const submissions = await this.activityService.getSubmissionByInstanceAndStudent(instanceId, studentId);
+
+      if (!submissions) {
+        res.status(404).json({
+          error: 'Not Found',
+          message: `No submission found for instance ${instanceId} and student ${studentId}`
+        });
+        return;
+      }
+
+      res.status(200).json({
+        submission_id: submissions.submissionId,
+        instance_id: submissions.instanceId,
+        student_id: submissions.studentId,
+        number_of_attempts: submissions.numberOfAttempts,
+        attempts: submissions.attempts,
+        created_at: submissions.createdAt
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

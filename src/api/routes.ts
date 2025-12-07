@@ -28,6 +28,7 @@ export function configureRoutes(activityService: ActivityService): Router {
   // Submission routes
   router.post('/submissions', instanceController.recordSubmission);
   router.get('/submissions/instance/:instanceId', instanceController.getSubmissionsByInstance);
+  router.get('/submissions/instance/:instanceId/student/:studentId', instanceController.getSubmissionByInstanceAndStudent);
 
   return router;
 }

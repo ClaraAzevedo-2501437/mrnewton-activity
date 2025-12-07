@@ -164,6 +164,14 @@ export class ActivityService {
   }
 
   /**
+   * Get submission for a specific student in an instance
+   */
+  public async getSubmissionByInstanceAndStudent(instanceId: string, studentId: string): Promise<Submission | null> {
+    const submissions = await this.submissionRepository.findByInstanceId(instanceId);
+    return submissions.find(sub => sub.studentId === studentId) || null;
+  }
+
+  /**
    * Get all activities
    */
   public async getAllActivities(): Promise<Activity[]> {

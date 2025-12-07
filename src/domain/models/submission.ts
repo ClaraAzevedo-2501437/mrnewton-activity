@@ -14,6 +14,7 @@ export interface AttemptResult {
   answers: Record<string, Answer>;  // questionId -> Answer
   result: number;  // Percentage of correct answers (0-100)
   submittedAt: string;  // Timestamp for this attempt
+  timeSpentSeconds?: number;  // Optional: actual time spent on this attempt in seconds
 }
 
 /**
