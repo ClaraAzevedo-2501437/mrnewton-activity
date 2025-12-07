@@ -1,0 +1,306 @@
+{
+	"info": {
+		"_postman_id": "5d8431f7-e5fa-490d-96bd-18c319b19800",
+		"name": "mrnewton-activity",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50486253",
+		"_collection_link": "https://clara-azevedo-2501437-4196425.postman.co/workspace/Clara's-Workspace~1b0dd33b-4d48-4b3e-854c-7bfceb42bc4b/collection/50486253-5d8431f7-e5fa-490d-96bd-18c319b19800?action=share&source=collection_link&creator=50486253"
+	},
+	"item": [
+		{
+			"name": "Config",
+			"item": [
+				{
+					"name": "Get Config Params",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/v1/config/params",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"config",
+								"params"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create/Update Config Params",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"params\": [\r\n    {\r\n      \"name\": \"title\",\r\n      \"type\": \"string\",\r\n      \"description\": \"Título da atividade\"\r\n    },\r\n    {\r\n      \"name\": \"grade\",\r\n      \"type\": \"integer\",\r\n      \"description\": \"Ano (10,11,12)\"\r\n    },\r\n    {\r\n      \"name\": \"modules\",\r\n      \"type\": \"array\",\r\n      \"items\": \"string\",\r\n      \"description\": \"Módulos temáticos\"\r\n    },\r\n    {\r\n      \"name\": \"number_of_exercises\",\r\n      \"type\": \"integer\"\r\n    },\r\n    {\r\n      \"name\": \"total_time_minutes\",\r\n      \"type\": \"integer\"\r\n    },\r\n    {\r\n      \"name\": \"number_of_retries\",\r\n      \"type\": \"integer\"\r\n    },\r\n    {\r\n      \"name\": \"relative_tolerance_pct\",\r\n      \"type\": \"number\"\r\n    },\r\n    {\r\n      \"name\": \"absolute_tolerance\",\r\n      \"type\": \"number\"\r\n    },\r\n    {\r\n      \"name\": \"show_answers_after_submission\",\r\n      \"type\": \"boolean\"\r\n    },\r\n    {\r\n      \"name\": \"scoring_policy\",\r\n      \"type\": \"string\",\r\n      \"enum\": [\r\n        \"linear\",\r\n        \"non-linear\"\r\n      ]\r\n    },\r\n    {\r\n      \"name\": \"approval_threshold\",\r\n      \"type\": \"number\"\r\n    },\r\n    {\r\n      \"name\": \"exercises\",\r\n      \"type\": \"array\",\r\n      \"items\": \"object\",\r\n      \"description\": \"Lista de exercícios (question, options, correct_options, correct_answer)\"\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/v1/config/params",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"config",
+								"params"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Quiz",
+			"item": [
+				{
+					"name": "Get Quizzes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/v1/config",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"config"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Quizzes",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Eletromagnetismo\",\r\n  \"grade\": 12,\r\n  \"modules\": \"Eletricidade, Magnetismo\",\r\n  \"number_of_exercises\": 4,\r\n  \"total_time_minutes\": 70,\r\n  \"number_of_retries\": 2,\r\n  \"show_answers_after_submission\": false,\r\n  \"scoring_policy\": \"linear\",\r\n  \"approval_threshold\": 0.65,\r\n  \"exercises\": [\r\n    {\r\n      \"question\": \"Qual é a resistência de um condutor se uma diferença de potencial de 12 V produz uma corrente de 3 A?\",\r\n      \"options\": [\"Lei de Ohm (V = RI)\", \"P = VI\", \"W = VIt\", \"Q = It\"],\r\n      \"correct_options\": \"Lei de Ohm (V = RI)\",\r\n      \"correct_answer\": \"4 Ω\"\r\n    },\r\n    {\r\n      \"question\": \"Três resistências de 6 Ω estão ligadas em paralelo. Qual é a resistência equivalente?\",\r\n      \"options\": [\"1/Req = 1/R1 + 1/R2 + 1/R3\", \"Req = R1 + R2 + R3\", \"P = R I²\", \"V = RI\"],\r\n      \"correct_options\": \"1/Req = 1/R1 + 1/R2 + 1/R3\",\r\n      \"correct_answer\": \"2 Ω\"\r\n    },\r\n    {\r\n      \"question\": \"Um aparelho de 1200 W funciona durante 2 horas ligado a uma tensão de 220 V. Qual é a energia consumida em kWh?\",\r\n      \"options\": [\"E = Pt (com conversão para kWh)\", \"Q = mcΔT\", \"W = Fd\", \"Ec = 1/2 mv²\"],\r\n      \"correct_options\": \"E = Pt (com conversão para kWh)\",\r\n      \"correct_answer\": \"2.4 kWh\"\r\n    },\r\n    {\r\n      \"question\": \"Um condutor retilíneo é percorrido por uma corrente de 5 A. Qual é a direção do campo magnético criado?\",\r\n      \"options\": [\"Regra da mão direita (polegar na corrente, dedos no campo)\", \"Campo paralelo ao condutor\", \"Campo perpendicular à corrente\", \"Não há campo magnético\"],\r\n      \"correct_options\": \"Regra da mão direita (polegar na corrente, dedos no campo)\",\r\n      \"correct_answer\": \"Circular em torno do condutor\"\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/v1/config",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"config"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Deploy",
+			"item": [
+				{
+					"name": "Create Quiz Instance",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"activity_id\": \"2cc2b8f0-d6d2-4a38-9685-0597ffb49e12\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/v1/deploy",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"deploy"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Instance Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/v1/deploy/:instanceId",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"deploy",
+								":instanceId"
+							],
+							"variable": [
+								{
+									"key": "instanceId",
+									"value": "inst_7bja3ssea"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Instances of an Activity",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/v1/deploy/activity/:activityId",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"deploy",
+								"activity",
+								":activityId"
+							],
+							"variable": [
+								{
+									"key": "activityId",
+									"value": "2cc2b8f0-d6d2-4a38-9685-0597ffb49e12"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Submission",
+			"item": [
+				{
+					"name": "Record Student Submission",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"instance_id\": \"inst_7bja3ssea\",\r\n  \"student_id\": \"student-001\",\r\n  \"attempts\": [\r\n    {\r\n      \"attemptIndex\": 1,\r\n      \"answers\": {\r\n        \"exercise_1\": {\r\n          \"selectedOption\": \"Equação da aceleração\",\r\n          \"rationale\": \"Usei a equação da aceleração porque o problema menciona velocidade e movimento, e a aceleração relaciona a variação de velocidade com o tempo.\"\r\n        },\r\n        \"exercise_2\": {\r\n          \"selectedOption\": \"2.ª Lei de Newton (Lei Fundamental da Dinâmica)\",\r\n          \"rationale\": \"De acordo com as leis de Newton que estudei, a segunda lei explica o comportamento de corpos sujeitos a forças, que é o caso descrito no enunciado.\"\r\n        },\r\n        \"exercise_3\": {\r\n          \"selectedOption\": \"F = ma\",\r\n          \"rationale\": \"Usei a fórmula F = ma porque o enunciado fornece massa e força, então aplicando F = ma, tenho 20 = 4 × a, logo a = 5 m/s².\"\r\n        },\r\n        \"exercise_4\": {\r\n          \"selectedOption\": \"Soma vetorial simples\",\r\n          \"rationale\": \"Como são duas forças atuando no mesmo objeto, pensei que a resultante seria a soma direta das duas forças: 3 N + 4 N = 7 N.\"\r\n        }\r\n      },\r\n      \"result\": 25.0,\r\n      \"submittedAt\": \"2025-12-04T16:10:00.000Z\"\r\n    },\r\n    {\r\n      \"attemptIndex\": 2,\r\n      \"answers\": {\r\n        \"exercise_1\": {\r\n          \"selectedOption\": \"Conversão de unidades\",\r\n          \"rationale\": \"Agora percebi que se trata de uma conversão de unidades. Para passar de km/h para m/s, uso o fator de conversão dividindo por 3,6.\"\r\n        },\r\n        \"exercise_2\": {\r\n          \"selectedOption\": \"1.ª Lei de Newton (Lei da Inércia)\",\r\n          \"rationale\": \"De acordo com a Lei da Inércia, um corpo mantém o seu estado de movimento ou repouso até que uma força externa atue sobre ele, que é exatamente o que o enunciado descreve.\"\r\n        },\r\n        \"exercise_3\": {\r\n          \"selectedOption\": \"F = ma\",\r\n          \"rationale\": \"Continuo a usar a fórmula F = ma porque é a relação correta entre força, massa e aceleração. Dividindo 20 N por 4 kg obtenho 5 m/s².\"\r\n        },\r\n        \"exercise_4\": {\r\n          \"selectedOption\": \"Teorema de Pitágoras\",\r\n          \"rationale\": \"Como as forças são perpendiculares entre si, aplico o Teorema de Pitágoras para calcular a resultante: √(3² + 4²) = √(9 + 16) = √25 = 5 N.\"\r\n        }\r\n      },\r\n      \"result\": 100.0,\r\n      \"submittedAt\": \"2025-12-04T16:20:00.000Z\"\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/v1/submissions",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"submissions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Submissions for an InstanceID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/v1/submissions/instance/:instanceId",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"submissions",
+								"instance",
+								":instanceId"
+							],
+							"variable": [
+								{
+									"key": "instanceId",
+									"value": "inst_7bja3ssea"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Student Submissions for an InstanceID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/v1/submissions/instance/:instanceId/student/:studentId",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"submissions",
+								"instance",
+								":instanceId",
+								"student",
+								":studentId"
+							],
+							"variable": [
+								{
+									"key": "instanceId",
+									"value": "inst_7bja3ssea"
+								},
+								{
+									"key": "studentId",
+									"value": "student-001"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
