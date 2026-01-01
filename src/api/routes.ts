@@ -1,17 +1,22 @@
 import { Router } from 'express';
 import { ActivityController } from './controllers/activityController';
 import { InstanceController } from './controllers/instanceController';
+import { ActivityFacade } from '../application/activityFacade';
 import { ActivityService } from '../services/activityService';
 
 /**
  * Configure API routes
+ * Controllers use the ActivityFacade as the single entry point
  */
-export function configureRoutes(activityService: ActivityService): Router {
+export function configureRoutes(
+  activityFacade: ActivityFacade,
+  activityService: ActivityService
+): Router {
   const router = Router();
 
-  // Initialize controllers
-  const activityController = new ActivityController(activityService);
-  const instanceController = new InstanceController(activityService);
+  // Initialize controllers with Facade and Service
+  const activityController = new ActivityController(activityFacade, activityService);
+  const instanceController = new InstanceController(activityFacade, activityService);
 
   // Activity configuration routes
   router.get('/config/params', activityController.getConfigParams);

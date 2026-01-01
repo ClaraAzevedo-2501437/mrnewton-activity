@@ -1,12 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
+import { ActivityFacade } from '../../application/activityFacade';
 import { ActivityService } from '../../services/activityService';
 import { logger } from '../../infra/logger';
 
 /**
  * InstanceController - Handles HTTP requests for deployment instances
+ * Uses ActivityFacade as the single entry point
  */
 export class InstanceController {
-  constructor(private activityService: ActivityService) {}
+  constructor(
+    private activityFacade: ActivityFacade,
+    private activityService: ActivityService // Kept for operations not exposed in Facade
+  ) {}
 
   /**
    * POST /api/v1/deploy
@@ -26,15 +31,15 @@ export class InstanceController {
         return;
       }
 
-      // Create deployment instance
-      const deployment = await this.activityService.createInstance(activity_id, session_params);
+      // Create deployment instance via Facade
+      const deployment = await this.activityFacade.createInstance(activity_id, session_params);
 
       res.status(201).json({
         instance_id: deployment.instanceId,
-        activity_id: deployment.activityId,
-        deploy_url: deployment.deployUrl,
-        expires_in_seconds: deployment.expiresInSeconds,
-        expires_at: deployment.expiresAt
+        activity_id: activity_id,
+        deploy_url: deployment.url,
+        expires_in_seconds: 604800, // 7 days in seconds
+        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
       });
     } catch (error) {
       next(error);
@@ -103,12 +108,19 @@ export class InstanceController {
         return;
       }
 
-      // Record submission
-      const submission = await this.activityService.recordSubmission(
-        instance_id,
-        student_id,
+      // Record submission via Facade
+      await this.activityFacade.recordSubmission({
+        instanceId: instance_id,
+        studentId: student_id,
         attempts
-      );
+      });
+
+      // Retrieve the recorded submission to return details
+      const submission = await this.activityService.getSubmissionByInstanceAndStudent(instance_id, student_id);
+      
+      if (!submission) {
+        throw new Error('Submission was not saved correctly');
+      }
 
       res.status(201).json({
         submission_id: submission.submissionId,

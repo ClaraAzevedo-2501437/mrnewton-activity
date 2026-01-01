@@ -1,13 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
+import { ActivityFacade } from '../../application/activityFacade';
 import { ActivityService } from '../../services/activityService';
 import { ValidationError } from '../../domain/errors/validationError';
 import { logger } from '../../infra/logger';
 
 /**
  * ActivityController - Handles HTTP requests for activity configuration
+ * Uses ActivityFacade as the single entry point
  */
 export class ActivityController {
-  constructor(private activityService: ActivityService) {}
+  constructor(
+    private activityFacade: ActivityFacade,
+    private activityService: ActivityService // Kept for schema operations not exposed in Facade
+  ) {}
 
   /**
    * GET /api/v1/config/params
@@ -74,8 +79,8 @@ export class ActivityController {
       
       const config = req.body;
       
-      // Use the service to create the activity (which uses the Builder)
-      const activity = await this.activityService.createFromJson(config);
+      // Use the Facade to create the activity
+      const activity = await this.activityFacade.createActivity(config);
 
       // Return the created activity
       res.status(201).json({
@@ -106,7 +111,15 @@ export class ActivityController {
   public getConfig = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { activityId } = req.params;
-      const activity = await this.activityService.getActivity(activityId);
+      const activity = await this.activityFacade.getActivity(activityId);
+      
+      if (!activity) {
+        res.status(404).json({
+          error: 'Not Found',
+          message: `Activity not found: ${activityId}`
+        });
+        return;
+      }
 
       res.status(200).json({
         activity_id: activity.id,

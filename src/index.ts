@@ -16,6 +16,9 @@ import { ConfigParamsSchemaRepositoryMongo } from './repositories/impl/paramSche
 // Services
 import { ActivityService } from './services/activityService';
 
+// Application (Facade)
+import { ActivityFacade } from './application/activityFacade';
+
 // API
 import { configureRoutes } from './api/routes';
 import { errorHandler, notFoundHandler, requestLogger } from './api/middleware/errorHandler';
@@ -41,7 +44,10 @@ function initializeDependencies() {
     configParamsSchemaRepository
   );
 
-  return { activityService };
+  // Initialize Facade
+  const activityFacade = new ActivityFacade(activityService);
+
+  return { activityService, activityFacade };
 }
 
 /**
@@ -56,10 +62,10 @@ function createApp() {
   app.use(requestLogger);
 
   // Initialize dependencies
-  const { activityService } = initializeDependencies();
+  const { activityService, activityFacade } = initializeDependencies();
 
   // API Routes
-  const apiRouter = configureRoutes(activityService);
+  const apiRouter = configureRoutes(activityFacade, activityService);
   app.use('/api/v1', apiRouter);
 
   // Swagger documentation
