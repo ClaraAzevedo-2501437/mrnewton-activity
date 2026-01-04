@@ -66,7 +66,8 @@ export class ActivityService {
     const instanceId = generateInstanceId();
     const createdAt = new Date().toISOString();
     const expiresAt = calculateExpirationDate(7); // 1 week expiration
-    const deployUrl = `https://mrnewton.example.com/instances/${instanceId}`;
+    const frontendBaseUrl = process.env.FRONTEND_BASE_URL || 'http://localhost:3000';
+    const deployUrl = `${frontendBaseUrl}/instances/${instanceId}`;
 
     // Create and save instance
     const instance = new DeploymentInstance(
